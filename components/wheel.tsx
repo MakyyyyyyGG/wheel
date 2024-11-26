@@ -89,21 +89,6 @@ export function Wheel({
     }
   }, [isSpinning, selectedIndex, normalizedEntries.length, onSpinEnd]);
 
-  useEffect(() => {
-    if (!isSpinning && selectedIndex !== null && !hasUpdatedOddsRef.current) {
-      hasUpdatedOddsRef.current = true;
-
-      const updatedEntries = entries.map((entry, index) => ({
-        ...entry,
-        odds: index === selectedIndex + 1 ? 100 : 0,
-      }));
-      onEntriesUpdate(updatedEntries);
-    } else if (isSpinning) {
-      // Reset the flag when spinning starts
-      hasUpdatedOddsRef.current = false;
-    }
-  }, [isSpinning, selectedIndex]);
-
   const segmentAngle = 360 / normalizedEntries.length;
 
   return (

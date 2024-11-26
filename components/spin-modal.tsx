@@ -74,11 +74,7 @@ export function SpinModal({
                   : "bg-blue-500 hover:bg-blue-600"
               }`}
             >
-              {isSpinning
-                ? "Spinning..."
-                : selectedIndex !== null
-                ? "Spin Again!"
-                : "Spin the Wheel!"}
+              {isSpinning ? "Spinning..." : "Spin the Wheel!"}
             </Button>
           </div>
         </DialogContent>
@@ -90,6 +86,9 @@ export function SpinModal({
           onClose={() => setShowWinnerAlert(false)}
           winnerName={entries[selectedIndex].name}
           onSpinAgain={onSpin}
+          entries={entries}
+          selectedIndex={selectedIndex}
+          onEntriesUpdate={onEntriesUpdate}
         />
       )}
     </>
