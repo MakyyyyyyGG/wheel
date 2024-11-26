@@ -41,27 +41,6 @@ export function EntryForm({ entries, onEntriesChange }: EntryFormProps) {
     onEntriesChange(entries.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newName.trim()) {
-      onEntriesChange([
-        ...entries,
-        {
-          name: newName.trim(),
-          odds: Math.floor(100 / (entries.length + 1)), // Use Math.floor for consistent rounding
-          color: getRandomColor(),
-        },
-      ]);
-      setNewName("");
-    }
-  };
-
-  const handleFinalize = () => {
-    if (entries.length > 0) {
-      onEntriesChange(entries);
-    }
-  };
-
   return (
     <div className="w-full max-w-md space-y-4">
       <div className="flex gap-2">
