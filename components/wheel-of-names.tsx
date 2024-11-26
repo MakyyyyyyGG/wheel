@@ -8,10 +8,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-// import { Wheel } from './components/wheel'
-// import { EntryForm } from './components/entry-form'
-// import type { WheelEntry } from './types/wheel'
-// import { normalizeOdds } from './utils/wheel-utils'
 import { keyframes } from "@emotion/react";
 import { Wheel } from "./wheel";
 import { EntryForm } from "./entry-form";
@@ -64,6 +60,10 @@ export default function WheelOfNames() {
     setIsSlowingDown(false);
   };
 
+  const handleEntriesUpdate = (newEntries: WheelEntry[]) => {
+    setEntries(newEntries);
+  };
+
   const animateFadeIn = {
     animation: `${fadeIn} 1s ease-out`,
   };
@@ -93,6 +93,7 @@ export default function WheelOfNames() {
               isSpinning={isSpinning}
               onSpinEnd={handleSpinEnd}
               selectedIndex={selectedIndex}
+              onEntriesUpdate={handleEntriesUpdate}
             />
           </div>
         </div>
@@ -108,6 +109,7 @@ export default function WheelOfNames() {
                 isSpinning={isSpinning}
                 onSpinEnd={handleSpinEnd}
                 selectedIndex={selectedIndex}
+                onEntriesUpdate={handleEntriesUpdate}
               />
               <Button
                 size="lg"

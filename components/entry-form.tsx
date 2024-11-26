@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Slider } from "@/components/ui/slider";
 import type { WheelEntry } from "../types/wheel";
 
 interface EntryFormProps {
@@ -15,22 +14,35 @@ export function EntryForm({ entries, onEntriesChange }: EntryFormProps) {
   const [newName, setNewName] = useState("");
 
   const getRandomColor = () => {
-    const colors = [
-      "bg-red-500",
-      "bg-blue-500",
-      "bg-green-500",
-      "bg-yellow-500",
-      "bg-purple-500",
-      "bg-pink-500",
-      "bg-indigo-500",
-      "bg-orange-500",
-      "bg-teal-500",
-      "bg-cyan-500",
-    ];
-    return colors[Math.floor(Math.random() * colors.length)];
+    const letters = "0123456789ABCDEF";
+    let color = "#";
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
   };
 
   const addEntry = () => {
+    if (newName.trim()) {
+      const isFirstEntry = entries.length === 0;
+      onEntriesChange([
+        ...entries,
+        {
+          name: newName.trim(),
+          odds: isFirstEntry ? 100 : 0,
+          color: getRandomColor(),
+        },
+      ]);
+      setNewName("");
+    }
+  };
+
+  const removeEntry = (index: number) => {
+    onEntriesChange(entries.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     if (newName.trim()) {
       onEntriesChange([
         ...entries,
@@ -44,14 +56,10 @@ export function EntryForm({ entries, onEntriesChange }: EntryFormProps) {
     }
   };
 
-  const updateOdds = (index: number, odds: number) => {
-    const newEntries = [...entries];
-    newEntries[index] = { ...newEntries[index], odds: Math.floor(odds) }; // Use Math.floor for consistent rounding
-    onEntriesChange(newEntries);
-  };
-
-  const removeEntry = (index: number) => {
-    onEntriesChange(entries.filter((_, i) => i !== index));
+  const handleFinalize = () => {
+    if (entries.length > 0) {
+      onEntriesChange(entries);
+    }
   };
 
   return (
@@ -72,21 +80,10 @@ export function EntryForm({ entries, onEntriesChange }: EntryFormProps) {
       <div className="space-y-4">
         {entries.map((entry, index) => (
           <div key={`entry-${index}`} className="flex items-center gap-4">
-            {/* <div className={`w-4 h-4 rounded-full ${entry.color}`} /> */}
             <div className="flex-1">
               <div className="font-medium">{entry.name}</div>
-              <div className="flex items-center gap-4">
-                <Slider
-                  value={[Math.floor(entry.odds)]} // Use Math.floor for consistent rounding
-                  onValueChange={(value) => updateOdds(index, value[0])}
-                  min={1}
-                  max={100}
-                  step={1}
-                  className="flex-1"
-                />
-                <span className="text-sm text-muted-foreground w-12">
-                  {Math.floor(entry.odds)}%
-                </span>
+              <div className="text-sm text-muted-foreground">
+                Odds: {entry.odds}%
               </div>
             </div>
             <Button
@@ -100,12 +97,6 @@ export function EntryForm({ entries, onEntriesChange }: EntryFormProps) {
           </div>
         ))}
       </div>
-
-      {/* {entries.length > 0 && (
-        <Button type="button" onClick={handlePreview} className="w-full mt-4">
-          Preview Wheel
-        </Button>
-      )} */}
     </div>
   );
 }

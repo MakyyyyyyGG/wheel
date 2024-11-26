@@ -8,6 +8,7 @@ interface WheelProps {
   isSpinning: boolean;
   onSpinEnd: () => void;
   selectedIndex: number | null;
+  onEntriesUpdate: (entries: WheelEntry[]) => void;
 }
 
 export function Wheel({
@@ -15,14 +16,37 @@ export function Wheel({
   isSpinning,
   onSpinEnd,
   selectedIndex,
+  onEntriesUpdate,
 }: WheelProps) {
-  console.log("Wheel entries:", entries);
-
   const wheelRef = useRef<SVGSVGElement>(null);
+  const hasUpdatedOddsRef = useRef(false);
+
+  // Define vibrant colors for the wheel
+  const wheelColors = [
+    "#FF6B6B", // Red
+    "#4ECDC4", // Teal
+    "#45B7D1", // Blue
+    "#96CEB4", // Green
+    "#FFEEAD", // Yellow
+    "#D4A5A5", // Pink
+    "#9B59B6", // Purple
+    "#3498DB", // Blue
+    "#E67E22", // Orange
+    "#1ABC9C", // Turquoise
+    "#F1C40F", // Yellow
+    "#E74C3C", // Red
+    "#2ECC71", // Green
+    "#BE90D4", // Purple
+    "#F39C12", // Orange
+  ];
+
   const normalizedEntries =
     entries.length > 0
-      ? entries
-      : [{ name: "Add items", odds: 100, color: "bg-gray-400" }];
+      ? entries.map((entry, index) => ({
+          ...entry,
+          color: wheelColors[index % wheelColors.length], // Assign color based on index
+        }))
+      : [{ name: "Add items", odds: 100, color: "#CCCCCC" }];
 
   useEffect(() => {
     if (isSpinning && wheelRef.current && selectedIndex !== null) {
@@ -65,6 +89,21 @@ export function Wheel({
     }
   }, [isSpinning, selectedIndex, normalizedEntries.length, onSpinEnd]);
 
+  useEffect(() => {
+    if (!isSpinning && selectedIndex !== null && !hasUpdatedOddsRef.current) {
+      hasUpdatedOddsRef.current = true;
+
+      const updatedEntries = entries.map((entry, index) => ({
+        ...entry,
+        odds: index === selectedIndex + 1 ? 100 : 0,
+      }));
+      onEntriesUpdate(updatedEntries);
+    } else if (isSpinning) {
+      // Reset the flag when spinning starts
+      hasUpdatedOddsRef.current = false;
+    }
+  }, [isSpinning, selectedIndex]);
+
   const segmentAngle = 360 / normalizedEntries.length;
 
   return (
@@ -82,8 +121,7 @@ export function Wheel({
           const endX = 50 + 50 * Math.cos((endAngle - 90) * (Math.PI / 180));
           const endY = 50 + 50 * Math.sin((endAngle - 90) * (Math.PI / 180));
 
-          // Calculate text position
-          const textRadius = 35; // Slightly inward from the edge
+          const textRadius = 35;
           const textX =
             50 + textRadius * Math.cos((midAngle - 90) * (Math.PI / 180));
           const textY =
@@ -93,19 +131,19 @@ export function Wheel({
             <g key={index}>
               <path
                 d={`M 50 50 L ${startX} ${startY} A 50 50 0 0 1 ${endX} ${endY} Z`}
-                className={`${entry.color} stroke-white stroke-[0.5] `}
+                fill={entry.color} // Use the color directly
+                stroke="white"
+                strokeWidth="0.5"
               />
               <text
                 x={textX}
                 y={textY}
-                className={`text-[2px] font-bold ${
-                  entry.color === "bg-white" ? "fill-black" : "fill-white"
-                }`}
+                className="text-[3px] font-bold fill-white"
                 textAnchor="middle"
                 dominantBaseline="middle"
                 transform={`rotate(${midAngle}, ${textX}, ${textY})`}
               >
-                {`${entry.name}`}
+                {entry.name}
               </text>
             </g>
           );
@@ -115,18 +153,9 @@ export function Wheel({
         <div className="w-8 h-8 rounded-full bg-white shadow-lg" />
       </div>
       <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[20px] border-r-[20px] border-b-[40px] border-l-transparent border-r-transparent border-b-red-500"
+        className="absolute top-0 left-1/2 -translate-x-1/2 rotate-180 w-0 h-0 border-l-[20px] border-r-[20px] border-b-[40px] border-l-transparent border-r-transparent border-b-red-500"
         aria-hidden="true"
       />
-      {!isSpinning && selectedIndex !== null && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="bg-white/90 px-4 py-2 rounded-lg shadow-lg">
-            <p className="text-xl font-bold">
-              Winner: {normalizedEntries[selectedIndex].name}!
-            </p>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
