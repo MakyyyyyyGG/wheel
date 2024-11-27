@@ -82,12 +82,17 @@ export function Wheel({
             wheelRef.current.style.transform = `rotate(${targetRotation}deg)`;
           }
           onSpinEnd();
+          // // Remove the winner from the entries after spin ends
+          // const updatedEntries = entries.filter(
+          //   (_, index) => index !== selectedIndex
+          // );
+          // onEntriesUpdate(updatedEntries);
         }
       };
 
       requestAnimationFrame(animate);
     }
-  }, [isSpinning, selectedIndex, normalizedEntries.length, onSpinEnd]);
+  }, [isSpinning, selectedIndex, normalizedEntries.length, onSpinEnd, entries]);
 
   const segmentAngle = 360 / normalizedEntries.length;
 
