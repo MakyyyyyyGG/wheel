@@ -42,7 +42,7 @@ export function SpinModal({
     if (!isSpinning && selectedIndex !== null) {
       const timer = setTimeout(() => {
         setShowWinnerAlert(true);
-      }, 500); // Small delay after spin ends
+      }); // Small delay after spin ends
       return () => clearTimeout(timer);
     }
   }, [isSpinning, selectedIndex]);

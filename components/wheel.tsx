@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef } from "react";
 import type { WheelEntry } from "../types/wheel";
 
@@ -8,7 +6,6 @@ interface WheelProps {
   isSpinning: boolean;
   onSpinEnd: () => void;
   selectedIndex: number | null;
-  // onEntriesUpdate: (entries: WheelEntry[]) => void;
 }
 
 export function Wheel({
@@ -16,37 +13,15 @@ export function Wheel({
   isSpinning,
   onSpinEnd,
   selectedIndex,
-}: // onEntriesUpdate,
-WheelProps) {
+}: WheelProps) {
   const wheelRef = useRef<SVGSVGElement>(null);
-  // const hasUpdatedOddsRef = useRef(false);
 
-  // Define vibrant colors for the wheel
-  const wheelColors = [
-    "#FF6B6B", // Red
-    "#4ECDC4", // Teal
-    "#45B7D1", // Blue
-    "#96CEB4", // Green
-    "#FFEEAD", // Yellow
-    "#D4A5A5", // Pink
-    "#9B59B6", // Purple
-    "#3498DB", // Blue
-    "#E67E22", // Orange
-    "#1ABC9C", // Turquoise
-    "#F1C40F", // Yellow
-    "#E74C3C", // Red
-    "#2ECC71", // Green
-    "#BE90D4", // Purple
-    "#F39C12", // Orange
-  ];
+  // Shuffle the entries and maintain a mapping to the original index
+  const shuffledEntries = entries
+    .map((entry, index) => ({ ...entry, originalIndex: index }))
+    .sort(() => Math.random() - 0.5);
 
-  const normalizedEntries =
-    entries.length > 0
-      ? entries.map((entry, index) => ({
-          ...entry,
-          color: wheelColors[index % wheelColors.length], // Assign color based on index
-        }))
-      : [{ name: "Add items", odds: 100, color: "#CCCCCC" }];
+  const segmentAngle = 360 / shuffledEntries.length;
 
   useEffect(() => {
     if (isSpinning && wheelRef.current && selectedIndex !== null) {
@@ -54,10 +29,17 @@ WheelProps) {
       const startTime = Date.now();
       const spinDuration = 6000;
       const slowdownTime = 4500;
-      const segmentAngle = 360 / normalizedEntries.length;
       const spins = 5;
+
+      // Map selectedIndex to the shuffled order
+      const shuffledIndex = shuffledEntries.findIndex(
+        (entry) => entry.originalIndex === selectedIndex
+      );
+
+      if (shuffledIndex === -1) return;
+
       const targetRotation =
-        spins * 360 - (selectedIndex * segmentAngle + segmentAngle / 2);
+        spins * 360 - (shuffledIndex * segmentAngle + segmentAngle / 2);
 
       const animate = () => {
         const currentTime = Date.now();
@@ -65,9 +47,8 @@ WheelProps) {
         const progress = Math.min(elapsedTime / spinDuration, 1);
 
         if (progress < 1 && wheelRef.current && isSpinning) {
-          const easeOut = (t: number) => {
-            return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-          };
+          const easeOut = (t: number) =>
+            t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
           const currentRotation =
             elapsedTime < slowdownTime
@@ -82,24 +63,24 @@ WheelProps) {
             wheelRef.current.style.transform = `rotate(${targetRotation}deg)`;
           }
           onSpinEnd();
-          // // Remove the winner from the entries after spin ends
-          // const updatedEntries = entries.filter(
-          //   (_, index) => index !== selectedIndex
-          // );
-          // onEntriesUpdate(updatedEntries);
         }
       };
 
       requestAnimationFrame(animate);
     }
-  }, [isSpinning, selectedIndex, normalizedEntries.length, onSpinEnd, entries]);
-
-  const segmentAngle = 360 / normalizedEntries.length;
+  }, [
+    isSpinning,
+    selectedIndex,
+    shuffledEntries,
+    segmentAngle,
+    onSpinEnd,
+    entries,
+  ]);
 
   return (
     <div className="relative w-[800px] h-[800px]">
       <svg ref={wheelRef} viewBox="0 0 100 100" className="w-full h-full">
-        {normalizedEntries.map((entry, index) => {
+        {shuffledEntries.map((entry, index) => {
           const startAngle = index * segmentAngle;
           const endAngle = (index + 1) * segmentAngle;
           const midAngle = startAngle + segmentAngle / 2;
@@ -121,7 +102,7 @@ WheelProps) {
             <g key={index}>
               <path
                 d={`M 50 50 L ${startX} ${startY} A 50 50 0 0 1 ${endX} ${endY} Z`}
-                fill={entry.color} // Use the color directly
+                fill={entry.color}
                 stroke="white"
                 strokeWidth="0.5"
               />

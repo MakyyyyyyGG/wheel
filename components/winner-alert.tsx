@@ -66,26 +66,26 @@ export function WinnerAlert({
 
   return (
     <AlertDialog open={isOpen} onOpenChange={handleClose}>
-      <AlertDialogContent className="max-w-[400px]">
-        <AlertDialogHeader>
-          <AlertDialogTitle className="text-2xl text-center">
+      <AlertDialogContent className="min-w-[800px] min-h-[800px] flex flex-col items-center justify-center">
+        <AlertDialogHeader className="text-center">
+          <AlertDialogTitle className="text-2xl">
             🎉 We Have a Winner! 🎉
           </AlertDialogTitle>
-          <AlertDialogDescription className="text-xl text-center mt-4">
+          <AlertDialogDescription className="text-xl mt-4 text-center">
             Congratulations
-            <span className="block text-2xl font-bold text-primary mt-2">
+            <span className="block text-5xl font-bold text-primary mt-2">
               {winnerName}
             </span>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="flex gap-2 justify-center mt-4">
-          <AlertDialogCancel onClick={handleClose}>Close</AlertDialogCancel>
           <Button
             onClick={handleSpinAgain}
             className="bg-green-500 hover:bg-green-600"
           >
             Spin Again!
           </Button>
+          <AlertDialogCancel onClick={handleClose}>Close</AlertDialogCancel>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
