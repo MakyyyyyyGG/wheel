@@ -60,7 +60,7 @@ export default function WheelPage() {
                 isSpinning={isSpinning}
                 onSpinEnd={handleSpinEnd}
                 selectedIndex={selectedIndex}
-                onEntriesUpdate={handleEntriesUpdate}
+                // onEntriesUpdate={handleEntriesUpdate}
               />
             </div>
           </div>

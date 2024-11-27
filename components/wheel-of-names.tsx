@@ -60,9 +60,9 @@ export default function WheelOfNames() {
     setIsSlowingDown(false);
   };
 
-  const handleEntriesUpdate = (newEntries: WheelEntry[]) => {
-    setEntries(newEntries);
-  };
+  // const handleEntriesUpdate = (newEntries: WheelEntry[]) => {
+  //   setEntries(newEntries);
+  // };
 
   const animateFadeIn = {
     animation: `${fadeIn} 1s ease-out`,
@@ -93,7 +93,7 @@ export default function WheelOfNames() {
               isSpinning={isSpinning}
               onSpinEnd={handleSpinEnd}
               selectedIndex={selectedIndex}
-              onEntriesUpdate={handleEntriesUpdate}
+              // onEntriesUpdate={handleEntriesUpdate}
             />
           </div>
         </div>
@@ -109,7 +109,7 @@ export default function WheelOfNames() {
                 isSpinning={isSpinning}
                 onSpinEnd={handleSpinEnd}
                 selectedIndex={selectedIndex}
-                onEntriesUpdate={handleEntriesUpdate}
+                // onEntriesUpdate={handleEntriesUpdate}
               />
               <Button
                 size="lg"

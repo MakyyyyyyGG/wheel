@@ -61,7 +61,7 @@ export function SpinModal({
               isSpinning={isSpinning}
               onSpinEnd={handleSpinEnd}
               selectedIndex={selectedIndex}
-              onEntriesUpdate={onEntriesUpdate}
+              // onEntriesUpdate={onEntriesUpdate}
             />
             <Button
               onClick={onSpin}

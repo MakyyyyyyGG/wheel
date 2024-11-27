@@ -8,7 +8,7 @@ interface WheelProps {
   isSpinning: boolean;
   onSpinEnd: () => void;
   selectedIndex: number | null;
-  onEntriesUpdate: (entries: WheelEntry[]) => void;
+  // onEntriesUpdate: (entries: WheelEntry[]) => void;
 }
 
 export function Wheel({
@@ -16,10 +16,10 @@ export function Wheel({
   isSpinning,
   onSpinEnd,
   selectedIndex,
-  onEntriesUpdate,
-}: WheelProps) {
+}: // onEntriesUpdate,
+WheelProps) {
   const wheelRef = useRef<SVGSVGElement>(null);
-  const hasUpdatedOddsRef = useRef(false);
+  // const hasUpdatedOddsRef = useRef(false);
 
   // Define vibrant colors for the wheel
   const wheelColors = [
